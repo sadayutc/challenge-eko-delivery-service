@@ -3,6 +3,7 @@ import { Typography, TextField, Button, Box } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import { ArrowRightAlt as ArrowRightIcon } from '@material-ui/icons';
 import { toast } from 'react-toastify';
+import useForm from 'react-hook-form';
 import { useLayout } from '../../contexts/layoutContext';
 import { useRoute } from '../../contexts/routeContext';
 import { calculateDeliveryCost } from '../../helpers/route';
@@ -14,11 +15,11 @@ const StyledForm = styled('form')(({ theme }) => ({
 }));
 
 const StyledSubmitButton = styled(Button)(({ theme }) => ({
-  // margin: theme.spacing(0, 0, 0, 1),
+  margin: theme.spacing(1, 0, 0, 0),
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-  margin: theme.spacing(0, 0.5, 0.5, 0),
+  margin: theme.spacing(0, 1, 1.5, 0),
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -26,7 +27,6 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const DeliveryCost = () => {
-  const [inputRoute, setInputRoute] = useState('ABE');
   const [currentRoute, setCurrentRoute] = useState('');
   const [deliveryCost, setDeliveryCost] = useState(null);
 
@@ -34,15 +34,14 @@ const DeliveryCost = () => {
     state: { routesData },
   } = useRoute();
   const { setHeaderTitle } = useLayout();
+  const { register, handleSubmit, errors } = useForm();
 
   useEffect(() => {
     setHeaderTitle('Delivery cost');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onFormSubmit = event => {
-    event.preventDefault();
-
+  const onFormSubmit = ({ route }, event) => {
     if (routesData === null || Object.values(routesData).length === 0) {
       toast.error(
         'Please set available routes before start calculating the delivery cost.',
@@ -50,12 +49,10 @@ const DeliveryCost = () => {
       return;
     }
 
-    // TODO: Validation
-    if (inputRoute.length > 0) {
-      setInputRoute('');
-      setCurrentRoute(inputRoute);
-      setDeliveryCost(calculateDeliveryCost(inputRoute, routesData));
-    }
+    setCurrentRoute(route);
+    setDeliveryCost(calculateDeliveryCost(route, routesData));
+
+    event.target.reset();
   };
 
   return (
@@ -67,17 +64,27 @@ const DeliveryCost = () => {
         To calculate the delivery cost, please enter the route. (e.g.
         &quot;ABE&quot;)
       </Typography>
-      <StyledForm noValidate onSubmit={onFormSubmit}>
+      <StyledForm noValidate onSubmit={handleSubmit(onFormSubmit)}>
         <Box>
           <StyledTextField
             id="route"
+            name="route"
             label="Route"
             variant="outlined"
-            onChange={({ target: { value } }) =>
-              setInputRoute(value.toUpperCase().trim())
-            }
-            value={inputRoute}
             margin="dense"
+            inputRef={register({
+              required: 'Route is required.',
+              minLength: {
+                value: 2,
+                message: 'Route must be at least 2 characters.',
+              },
+              pattern: {
+                value: /^[A-Z]+$/,
+                message: 'Route must contain only alphabets in uppercase form.'
+              }
+            })}
+            error={!!errors.route}
+            helperText={errors.route ? errors.route.message : null}
           />
         </Box>
 
@@ -96,7 +103,7 @@ const DeliveryCost = () => {
       </Typography>
       {currentRoute.length === 0 ? (
         <Typography paragraph>
-          No calculation, Please use above process.
+          No calculation, please use above process.
         </Typography>
       ) : (
         <>
@@ -114,7 +121,7 @@ const DeliveryCost = () => {
                 &quot; is&nbsp;
                 <strong>{deliveryCost}</strong>
               </Typography>
-              <StyledBox alignItems="center" display="flex">
+              <StyledBox alignItems="center" display="flex" flexWrap="wrap">
                 {[...currentRoute].map((route, index, originalArray) => (
                   <React.Fragment key={`${route}_${index}`}>
                     <AvatarWithColor character={route} />

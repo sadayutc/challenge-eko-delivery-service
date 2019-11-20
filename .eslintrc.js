@@ -36,6 +36,7 @@ module.exports = {
     'no-plusplus': 'off',
     'arrow-parens': 'off',
     'no-lonely-if': 'off',
+    'no-param-reassign': ['error', { props: false }],
 
     // import
     'import/prefer-default-export': 'off',

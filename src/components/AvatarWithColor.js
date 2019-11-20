@@ -7,15 +7,16 @@ import { alphabetColor } from '../helpers/color';
 const StyledAvatar = styled(({ backgroundColor, ...rest }) => (
   <Avatar {...rest} />
 ))(({ theme, backgroundColor }) => ({
+  margin: theme.spacing(0, 0, 1, 0),
   ...(backgroundColor
     ? {
         backgroundColor,
       }
     : {
-      border: `1px solid ${theme.palette.text.primary}`,
-      backgroundColor: 'transparent',
-      color: theme.palette.text.primary
-    }),
+        border: `1px solid ${theme.palette.text.primary}`,
+        backgroundColor: 'transparent',
+        color: theme.palette.text.primary,
+      }),
 }));
 
 const AvatarWithColor = ({ character, ...rest }) => {

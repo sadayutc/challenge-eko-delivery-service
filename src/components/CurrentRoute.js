@@ -16,7 +16,7 @@ const CurrentRoute = ({ routesData }) => {
         <strong>Available routes</strong>
       </Typography>
       {!routesData ? (
-        <Typography paragraph>No data, Please set available routes.</Typography>
+        <Typography paragraph>No data, please set available routes.</Typography>
       ) : (
         Object.keys(routesData).map(routeKey => (
           <React.Fragment key={`${routeKey}`}>

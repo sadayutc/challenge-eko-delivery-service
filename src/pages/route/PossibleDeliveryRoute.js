@@ -3,6 +3,7 @@ import { Typography, TextField, Button, Box, Divider } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 import { ArrowRightAlt as ArrowRightIcon } from '@material-ui/icons';
 import { toast } from 'react-toastify';
+import useForm from 'react-hook-form';
 import AvatarWithColor from '../../components/AvatarWithColor';
 import { useLayout } from '../../contexts/layoutContext';
 import { useRoute } from '../../contexts/routeContext';
@@ -14,7 +15,7 @@ const StyledForm = styled('form')(({ theme }) => ({
 }));
 
 const StyledSubmitButton = styled(Button)(({ theme }) => ({
-  // margin: theme.spacing(0),
+  margin: theme.spacing(1, 0, 0, 0),
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -24,15 +25,11 @@ const StyledBox = styled(Box)(({ theme }) => ({
 const StyledTextField = styled(({ narrow, ...rest }) => (
   <TextField {...rest} />
 ))(({ theme, narrow }) => ({
-  margin: theme.spacing(0, 0.5, 0.5, 0),
-  maxWidth: narrow ? 100 : 150,
+  margin: theme.spacing(0, 1, 1.5, 0),
+  maxWidth: narrow ? 150 : 200,
 }));
 
 const PossibleDeliveryRoutes = () => {
-  const [startNode, setStartNode] = useState('E');
-  const [endNode, setEndNode] = useState('D');
-  const [stop, setStop] = useState(4);
-
   const [currentStartNode, setCurrentStartNode] = useState('');
   const [currentEndNode, setCurrentEndNode] = useState('');
   const [currentStop, setCurrentStop] = useState(null);
@@ -42,15 +39,14 @@ const PossibleDeliveryRoutes = () => {
     state: { routesData },
   } = useRoute();
   const { setHeaderTitle } = useLayout();
+  const { register, handleSubmit, errors } = useForm();
 
   useEffect(() => {
     setHeaderTitle('Possible delivery route');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onFormSubmit = event => {
-    event.preventDefault();
-
+  const onFormSubmit = ({ startNode, endNode, stop }, event) => {
     if (routesData === null || Object.values(routesData).length === 0) {
       toast.error(
         'Please set available routes before start calculating the possible delivery route.',
@@ -58,19 +54,14 @@ const PossibleDeliveryRoutes = () => {
       return;
     }
 
-    // TODO: Validation
-    if(startNode && endNode && stop) {
-      setCurrentStartNode(startNode);
-      setCurrentEndNode(endNode);
-      setCurrentStop(stop);
-      setPossibleDeliveryRoutes(
-        calculatePossibleDeliveryRoutes(startNode, endNode, stop, routesData),
-      );
+    setCurrentStartNode(startNode);
+    setCurrentEndNode(endNode);
+    setCurrentStop(stop);
+    setPossibleDeliveryRoutes(
+      calculatePossibleDeliveryRoutes(startNode, endNode, stop, routesData),
+    );
 
-      setStartNode('');
-      setEndNode('');
-      setStop('');
-    }
+    event.target.reset();
   };
 
   return (
@@ -82,52 +73,76 @@ const PossibleDeliveryRoutes = () => {
         To calculate the number of possible delivery routes, please enter
         values.
       </Typography>
-      <StyledForm noValidate onSubmit={onFormSubmit}>
+      <StyledForm noValidate onSubmit={handleSubmit(onFormSubmit)}>
         <Box>
           <StyledTextField
             id="startNode"
+            name="startNode"
             label="Start node"
             variant="outlined"
-            onChange={({ target: { value } }) =>
-              setStartNode(
-                value
-                  .substr(0, 1)
-                  .toUpperCase()
-                  .trim(),
-              )
-            }
             margin="dense"
-            value={startNode}
+            inputProps={{
+              maxLength: 1,
+            }}
+            inputRef={register({
+              required: 'Start node is required.',
+              maxLength: {
+                value: 1,
+                message: 'Start node must be less than 1 characters.',
+              },
+              pattern: {
+                value: /^[A-Z]+$/,
+                message: 'Start node must contain only uppercase alphabets.',
+              },
+            })}
+            error={!!errors.startNode}
+            helperText={errors.startNode ? errors.startNode.message : null}
           />
 
           <StyledTextField
             id="endNode"
+            name="endNode"
             label="End node"
             variant="outlined"
-            onChange={({ target: { value } }) =>
-              setEndNode(
-                value
-                  .substr(0, 1)
-                  .toUpperCase()
-                  .trim(),
-              )
-            }
             margin="dense"
-            value={endNode}
+            inputProps={{
+              maxLength: 1,
+            }}
+            inputRef={register({
+              required: 'End node is required.',
+              maxLength: {
+                value: 1,
+                message: 'End node must be less than 1 characters.',
+              },
+              pattern: {
+                value: /^[A-Z]+$/,
+                message: 'End node must contain only uppercase alphabets.',
+              },
+            })}
+            error={!!errors.endNode}
+            helperText={errors.endNode ? errors.endNode.message : null}
           />
 
           <StyledTextField
             id="stop"
+            name="stop"
             label="Stop"
             variant="outlined"
-            onChange={({ target: { value } }) => setStop(value < 1 ? 1 : value)}
             type="number"
             inputProps={{
               min: 1,
             }}
-            value={stop}
             margin="dense"
             narrow
+            inputRef={register({
+              required: 'Stop is required.',
+              min: {
+                value: 1,
+                message: 'Stop must be at least 1.',
+              },
+            })}
+            error={!!errors.stop}
+            helperText={errors.stop ? errors.stop.message : null}
           />
         </Box>
 
@@ -146,7 +161,7 @@ const PossibleDeliveryRoutes = () => {
       </Typography>
       {!possibleDeliveryRoutes ? (
         <Typography paragraph>
-          No calculation, Please use above process.
+          No calculation, please use above process.
         </Typography>
       ) : (
         <Typography paragraph>
@@ -166,7 +181,7 @@ const PossibleDeliveryRoutes = () => {
 
       {!possibleDeliveryRoutes ? (
         <Typography paragraph>
-          No calculation, Please use above process.
+          No calculation, please use above process.
         </Typography>
       ) : (
         <>
@@ -176,7 +191,7 @@ const PossibleDeliveryRoutes = () => {
           {possibleDeliveryRoutes.map(
             ({ route: possibleDeliveryRoute, cost }) => (
               <React.Fragment key={possibleDeliveryRoute}>
-                <StyledBox alignItems="center" display="flex">
+                <StyledBox alignItems="center" display="flex" flexWrap="wrap">
                   {[...possibleDeliveryRoute].map(
                     (route, index, originalArray) => (
                       <React.Fragment key={`${route}_${index}`}>
