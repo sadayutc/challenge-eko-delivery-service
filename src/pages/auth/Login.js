@@ -102,7 +102,7 @@ const Login = () => {
 
   const { loginSuccess } = useUser();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
 
     // TODO: REMOVE MOCKUP
@@ -123,16 +123,21 @@ const Login = () => {
 
   return (
     <StyledContainer noOverlay={isLoggingIn}>
-      <Grid container item xs={12} sm={8} md={5}>
+      <Grid
+        container
+        justify="center"
+        alignItems="center"
+        xs={12}
+        sm={8}
+        md={5}
+      >
         <Card>
           <CardContent>
             <StyledFormWrapper>
               <StyledLoginAvatar>
                 <LoginIcon />
               </StyledLoginAvatar>
-              <Typography variant="h3">
-                Log in
-              </Typography>
+              <Typography variant="h3">Log in</Typography>
               <StyledForm noValidate onSubmit={handleSubmit}>
                 <TextField
                   error={isLoginFailed}
