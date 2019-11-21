@@ -145,7 +145,7 @@ function _recursiveCalculatePossibleDeliveryRoutes(
   if (localFoundRoute && startNode === endNode) {
     localFoundRoute += endNode;
 
-    if (!_.isNil(sameRouteCost) && currentCost < sameRouteCost) {
+    if (!_.isNil(sameRouteCost) && currentCost < sameRouteCost && routesData[endNode]) {
       const routeArray = Object.keys(routesData[endNode])
         .map(node => {
           const edge = routesOfStartNode[node];
