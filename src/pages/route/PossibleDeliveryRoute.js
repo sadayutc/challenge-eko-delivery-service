@@ -26,7 +26,7 @@ const StyledTextField = styled(({ narrow, ...rest }) => (
   <TextField {...rest} />
 ))(({ theme, narrow }) => ({
   margin: theme.spacing(0, 1, 1.5, 0),
-  maxWidth: narrow ? 150 : 200,
+  width: narrow ? 200 : 300,
 }));
 
 const PossibleDeliveryRoutes = () => {
@@ -91,6 +91,9 @@ const PossibleDeliveryRoutes = () => {
             inputProps={{
               maxLength: 1,
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
             inputRef={register({
               required: 'Start node is required.',
               maxLength: {
@@ -115,6 +118,9 @@ const PossibleDeliveryRoutes = () => {
             inputProps={{
               maxLength: 1,
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
             inputRef={register({
               required: 'End node is required.',
               maxLength: {
@@ -138,6 +144,9 @@ const PossibleDeliveryRoutes = () => {
             type="number"
             inputProps={{
               min: 1,
+            }}
+            InputLabelProps={{
+              shrink: true,
             }}
             margin="dense"
             narrow

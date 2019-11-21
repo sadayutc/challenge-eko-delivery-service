@@ -93,6 +93,9 @@ const RouteSet = () => {
             variant="outlined"
             fullWidth
             margin="dense"
+            InputLabelProps={{
+              shrink: true,
+            }}
             inputRef={register({
               required: 'Routes are required.',
               pattern: {

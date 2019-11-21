@@ -20,6 +20,7 @@ const StyledSubmitButton = styled(Button)(({ theme }) => ({
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   margin: theme.spacing(0, 1, 1.5, 0),
+  width: 300,
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -72,6 +73,9 @@ const DeliveryCost = () => {
             label="Route"
             variant="outlined"
             margin="dense"
+            InputLabelProps={{
+              shrink: true,
+            }}
             inputRef={register({
               required: 'Route is required.',
               minLength: {
@@ -80,8 +84,8 @@ const DeliveryCost = () => {
               },
               pattern: {
                 value: /^[A-Z]+$/,
-                message: 'Route must contain only alphabets in uppercase form.'
-              }
+                message: 'Route must contain only alphabets in uppercase form.',
+              },
             })}
             error={!!errors.route}
             helperText={errors.route ? errors.route.message : null}

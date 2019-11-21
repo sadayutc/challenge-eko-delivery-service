@@ -24,7 +24,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 const StyledTextField = styled(TextField)(({ theme, narrow }) => ({
   margin: theme.spacing(0, 1, 1.5, 0),
-  maxWidth: narrow ? 150 : 200,
+  width: narrow ? 200 : 300,
 }));
 
 const CheapestDeliveryRoute = () => {
@@ -79,6 +79,9 @@ const CheapestDeliveryRoute = () => {
             inputProps={{
               maxLength: 1,
             }}
+            InputLabelProps={{
+              shrink: true,
+            }}
             inputRef={register({
               required: 'Start node is required.',
               maxLength: {
@@ -103,6 +106,9 @@ const CheapestDeliveryRoute = () => {
             margin="dense"
             inputProps={{
               maxLength: 1,
+            }}
+            InputLabelProps={{
+              shrink: true,
             }}
             inputRef={register({
               required: 'End node is required.',
@@ -163,7 +169,7 @@ const CheapestDeliveryRoute = () => {
             &quot; is&nbsp;
             <strong>{cheapestDeliveryRoute.cost}</strong>
           </Typography>
-          <StyledBox alignItems="center" display="flex">
+          <StyledBox alignItems="center" display="flex" flexWrap="wrap">
             {[...cheapestDeliveryRoute.route].map(
               (route, index, originalArray) => (
                 <React.Fragment key={`${route}_${index}`}>
