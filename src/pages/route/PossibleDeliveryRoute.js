@@ -54,11 +54,18 @@ const PossibleDeliveryRoutes = () => {
       return;
     }
 
+    const nullableStop = stop.length > 0 ? stop : null;
+
     setCurrentStartNode(startNode);
     setCurrentEndNode(endNode);
-    setCurrentStop(stop);
+    setCurrentStop(nullableStop);
     setPossibleDeliveryRoutes(
-      calculatePossibleDeliveryRoutes(startNode, endNode, stop, routesData),
+      calculatePossibleDeliveryRoutes(
+        startNode,
+        endNode,
+        nullableStop,
+        routesData,
+      ),
     );
 
     event.target.reset();
@@ -135,7 +142,6 @@ const PossibleDeliveryRoutes = () => {
             margin="dense"
             narrow
             inputRef={register({
-              required: 'Stop is required.',
               min: {
                 value: 1,
                 message: 'Stop must be at least 1.',
@@ -170,7 +176,13 @@ const PossibleDeliveryRoutes = () => {
             {currentStartNode}
             {currentEndNode}
           </strong>
-          &quot; with a maximum of <strong>{currentStop}</strong> stops is&nbsp;
+          &quot;
+          {currentStop && (
+            <>
+              &nbsp;with a maximum of <strong>{currentStop}</strong> stop(s)
+            </>
+          )}
+          &nbsp;is&nbsp;
           <strong>{possibleDeliveryRoutes.length}</strong>
         </Typography>
       )}

@@ -160,7 +160,7 @@ const CheapestDeliveryRoute = () => {
               {currentStartNode}
               {currentEndNode}
             </strong>
-            &quot;is&nbsp;
+            &quot; is&nbsp;
             <strong>{cheapestDeliveryRoute.cost}</strong>
           </Typography>
           <StyledBox alignItems="center" display="flex">

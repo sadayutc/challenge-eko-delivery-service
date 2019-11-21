@@ -16,7 +16,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const StyledSubmitButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(1, 0, 0, 0),
+  margin: theme.spacing(1, 1, 0, 0),
 }));
 
 const RouteSet = () => {
@@ -32,8 +32,7 @@ const RouteSet = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onFormSubmit = ({ routes }, event) => {
-    const routeArray = routes.replace(/\s*,\s*/g, ',').split(',');
+  const toRoutesData = routeArray => {
     const sortedRouteArray = [...routeArray].sort();
     const newRoutesData = {};
 
@@ -45,9 +44,34 @@ const RouteSet = () => {
       };
     });
 
+    return newRoutesData;
+  };
+
+  const onFormSubmit = ({ routes }, event) => {
+    const routeArray = routes.replace(/\s*,\s*/g, ',').split(',');
+    const newRoutesData = toRoutesData(routeArray);
+
     setRoutesData(newRoutesData);
 
     event.target.reset();
+  };
+
+  const onUseDemoRoutesPress = () => {
+    const routeArray = [
+      'AB1',
+      'AC4',
+      'AD10',
+      'BE3',
+      'CD4',
+      'CF2',
+      'DE1',
+      'EB3',
+      'EA2',
+      'FD1',
+    ];
+    const newRoutesData = toRoutesData(routeArray);
+
+    setRoutesData(newRoutesData);
   };
 
   return (
@@ -87,6 +111,15 @@ const RouteSet = () => {
           variant="contained"
         >
           Set
+        </StyledSubmitButton>
+        <StyledSubmitButton
+          type="button"
+          color="secondary"
+          size="medium"
+          variant="contained"
+          onClick={onUseDemoRoutesPress}
+        >
+          Use demo routes
         </StyledSubmitButton>
       </StyledForm>
       <CurrentRoute routesData={routesData} />
