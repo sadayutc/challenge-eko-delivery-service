@@ -45,12 +45,19 @@ function calculateDeliveryCost(path, routesData) {
  * @param {Object} routesData
  * @returns {Object[]}
  */
-function calculatePossibleDeliveryRoutes(startNode, endNode, stop, routesData) {
+function calculatePossibleDeliveryRoutes(
+  startNode,
+  endNode,
+  stop,
+  sameRouteCost,
+  routesData,
+) {
   const possibleDeliveryRoutes = _recursiveCalculatePossibleDeliveryRoutes(
     startNode,
     endNode,
     routesData,
     stop,
+    sameRouteCost,
   );
 
   return possibleDeliveryRoutes.map(possibleDeliveryRoute => ({
@@ -118,7 +125,9 @@ function _recursiveCalculatePossibleDeliveryRoutes(
   endNode,
   routesData,
   stop = null,
+  sameRouteCost = null,
   foundRoute = '',
+  currentCost = 0,
 ) {
   const routesOfStartNode = routesData[startNode];
   let localFoundRoute = foundRoute;
@@ -128,15 +137,45 @@ function _recursiveCalculatePossibleDeliveryRoutes(
     return [];
   }
 
+  if (!_.isNil(sameRouteCost) && currentCost >= sameRouteCost) {
+    return '';
+  }
+
   // found route
   if (localFoundRoute && startNode === endNode) {
     localFoundRoute += endNode;
+
+    if (!_.isNil(sameRouteCost) && currentCost < sameRouteCost) {
+      const routeArray = Object.keys(routesData[endNode])
+        .map(node => {
+          const edge = routesOfStartNode[node];
+
+          // stop if edge of node is 0
+          if (edge === 0) {
+            return '';
+          }
+
+          return _recursiveCalculatePossibleDeliveryRoutes(
+            node,
+            endNode,
+            routesData,
+            stop,
+            sameRouteCost,
+            localFoundRoute,
+            currentCost + edge,
+          );
+        })
+        .filter(route => route !== '');
+
+      return [localFoundRoute, ...routeArray];
+    }
+
     return localFoundRoute;
   }
 
   // stop if duplicate start route is found
   const skipDuplicatedRoute = [...localFoundRoute].splice(-1) + startNode;
-  if (localFoundRoute.includes(skipDuplicatedRoute)) {
+  if (_.isNil(sameRouteCost) && localFoundRoute.includes(skipDuplicatedRoute)) {
     return '';
   }
 
@@ -149,9 +188,10 @@ function _recursiveCalculatePossibleDeliveryRoutes(
 
   const routeArray = Object.keys(routesOfStartNode)
     .map(node => {
+      const edge = routesOfStartNode[node];
 
       // stop if edge of node is 0
-      if (routesOfStartNode[node] === 0) {
+      if (edge === 0) {
         return '';
       }
 
@@ -160,7 +200,9 @@ function _recursiveCalculatePossibleDeliveryRoutes(
         endNode,
         routesData,
         stop,
+        sameRouteCost,
         localFoundRoute,
+        currentCost + edge,
       );
     })
     .filter(route => route !== '');

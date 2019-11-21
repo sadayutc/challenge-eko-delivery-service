@@ -33,6 +33,7 @@ const PossibleDeliveryRoutes = () => {
   const [currentStartNode, setCurrentStartNode] = useState('');
   const [currentEndNode, setCurrentEndNode] = useState('');
   const [currentStop, setCurrentStop] = useState(null);
+  const [currentSameRouteCost, setCurrentSameRouteCost] = useState(null);
   const [possibleDeliveryRoutes, setPossibleDeliveryRoutes] = useState(null);
 
   const {
@@ -46,24 +47,27 @@ const PossibleDeliveryRoutes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onFormSubmit = ({ startNode, endNode, stop }, event) => {
+  const onFormSubmit = ({ startNode, endNode, stop, sameRouteCost }, event) => {
     if (routesData === null || Object.values(routesData).length === 0) {
       toast.error(
         'Please set available routes before start calculating the possible delivery route.',
       );
       return;
     }
-
     const nullableStop = stop.length > 0 ? stop : null;
+    const nullableSameRouteCost =
+      sameRouteCost.length > 0 ? sameRouteCost : null;
 
     setCurrentStartNode(startNode);
     setCurrentEndNode(endNode);
     setCurrentStop(nullableStop);
+    setCurrentSameRouteCost(nullableSameRouteCost);
     setPossibleDeliveryRoutes(
       calculatePossibleDeliveryRoutes(
         startNode,
         endNode,
         nullableStop,
+        nullableSameRouteCost,
         routesData,
       ),
     );
@@ -161,6 +165,38 @@ const PossibleDeliveryRoutes = () => {
           />
         </Box>
 
+        <Box>
+          <Typography paragraph>
+            To allow calculation using the same route with cost, please set
+            below value.
+          </Typography>
+          <StyledTextField
+            id="sameRouteCost"
+            name="sameRouteCost"
+            label="Same Route Cost"
+            variant="outlined"
+            type="number"
+            inputProps={{
+              min: 1,
+            }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            margin="dense"
+            narrow
+            inputRef={register({
+              min: {
+                value: 1,
+                message: 'Same route cost must be at least 1.',
+              },
+            })}
+            error={!!errors.sameRouteCost}
+            helperText={
+              errors.sameRouteCost ? errors.sameRouteCost.message : null
+            }
+          />
+        </Box>
+
         <StyledSubmitButton
           type="submit"
           color="primary"
@@ -186,12 +222,24 @@ const PossibleDeliveryRoutes = () => {
             {currentEndNode}
           </strong>
           &quot;
+          {(currentStop || currentSameRouteCost) &&
+            ' that included below condition(s):'}
           {currentStop && (
             <>
-              &nbsp;with a maximum of <strong>{currentStop}</strong> stop(s)
+              <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;- a maximum of{' '}
+              <strong>{currentStop}</strong> stop(s)
             </>
           )}
-          &nbsp;is&nbsp;
+          {currentSameRouteCost && (
+            <>
+              <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;- allow calculation using the same route
+              with <strong>{currentSameRouteCost}</strong> cost
+            </>
+          )}
+          {currentStop || currentSameRouteCost ? <br /> : <>&nbsp;</>}
+          is&nbsp;
           <strong>{possibleDeliveryRoutes.length}</strong>
         </Typography>
       )}
