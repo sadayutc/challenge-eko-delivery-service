@@ -124,7 +124,7 @@ function _recursiveCalculatePossibleDeliveryRoutes(
   let localFoundRoute = foundRoute;
 
   // stop if start node is notfound
-  if (!routesOfStartNode) {
+  if (!localFoundRoute && !routesOfStartNode) {
     return [];
   }
 

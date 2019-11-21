@@ -217,15 +217,14 @@ const PossibleDeliveryRoutes = () => {
                     (route, index, originalArray) => (
                       <React.Fragment key={`${route}_${index}`}>
                         <AvatarWithColor character={route} />
-                        {routesData[route][originalArray[index + 1]] ? (
-                          <>
-                            <ArrowRightIcon />
-                            {routesData[route][originalArray[index + 1]]}
-                            <ArrowRightIcon />
-                          </>
-                        ) : (
-                          <></>
-                        )}
+                        {routesData[route] &&
+                          routesData[route][originalArray[index + 1]] && (
+                            <>
+                              <ArrowRightIcon />
+                              {routesData[route][originalArray[index + 1]]}
+                              <ArrowRightIcon />
+                            </>
+                          )}
                       </React.Fragment>
                     ),
                   )}
