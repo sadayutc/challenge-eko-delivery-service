@@ -3,7 +3,12 @@
 ## Demo
 
 - https://challenge-eko-delivery-service.netlify.com
+- Login using below info:
 
+   ```sh
+   username: 'user@example.com'
+   password: 'password'
+   ```
 ## Prerequisite
 
 - Node.JS > 10
@@ -29,10 +34,17 @@
    $ yarn start
    ```
 
-4. Test the application
+4. Open application `http://localhost:3000` and login using below info:
+
+   ```sh
+   username: 'user@example.com'
+   password: 'password'
+   ```
+
+5. Test the application
 
    ```sh
    $ yarn test
    ```
 
-5. That's it!
+6. That's it!
