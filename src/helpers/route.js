@@ -42,6 +42,7 @@ function calculateDeliveryCost(path, routesData) {
  * @param {string} startNode
  * @param {string} endNode
  * @param {(number|null)} stop
+ * @param {(number|null)} sameRouteCost
  * @param {Object} routesData
  * @returns {Object[]}
  */
@@ -71,7 +72,6 @@ function calculatePossibleDeliveryRoutes(
  * and find minimum cost
  * @param {string} startNode
  * @param {string} endNode
- * @param {(number|null)} stop
  * @param {Object} routesData
  * @returns {Object[]}
  */
@@ -117,7 +117,9 @@ function calculateCheapestDeliveryRoute(startNode, endNode, routesData) {
  * @param {string} endNode
  * @param {Object} routesData
  * @param {(number|null)} [stop=null]
+ * @param {(number|null)} [sameRouteCost=null]
  * @param {string} [foundRoute='']
+ * @param {number} [currentCost=0]
  * @returns {string[]}
  */
 function _recursiveCalculatePossibleDeliveryRoutes(
